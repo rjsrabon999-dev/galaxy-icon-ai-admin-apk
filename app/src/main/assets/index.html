@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Galaxy Icon Ai — অ্যাডমিন কন্ট্রোল প্যানেল</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'media',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Noto Sans Bengali"', 'system-ui', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            50: '#e6f5ee',
+            500: '#0b8f5a',
+            600: '#09784b',
+            400: '#3ddc97',
+          }
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  body { font-family: "Noto Sans Bengali", system-ui, sans-serif; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade { animation: fadeIn 0.2s ease-out; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#121513] dark:text-[#e8eeea] min-h-screen flex flex-col">
+
+<!-- টপ নেভিগেশন বার -->
+<header class="sticky top-0 z-30 bg-white/90 dark:bg-[#1c211f]/90 backdrop-blur border-b border-slate-200 dark:border-[#2a312e] px-4 py-3">
+  <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+        🌌
+      </div>
+      <div>
+        <h1 class="font-bold text-base sm:text-lg leading-tight text-slate-900 dark:text-white">Galaxy Icon Ai</h1>
+        <p class="text-xs text-[#0b8f5a] dark:text-[#3ddc97] font-semibold">অ্যাডমিন কন্ট্রোল প্যানেল</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="syncAll(true)" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#262d2a] hover:bg-slate-200 dark:hover:bg-[#2f3834] text-xs sm:text-sm font-medium flex items-center gap-1.5 transition" title="ডাটা রিফ্রেশ করুন">
+        <span>🔄</span> <span class="hidden sm:inline">রিফ্রেশ</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- মেইন কন্টেইনার -->
+<div class="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 pb-24 sm:pb-8">
+  
+  <!-- ডেস্কটপ ট্যাব নেভিগেশন -->
+  <nav class="hidden sm:flex gap-2 bg-white dark:bg-[#1c211f] p-1.5 rounded-2xl border border-slate-200 dark:border-[#2a312e] mb-5 shadow-sm">
+    <button onclick="switchTab('dash')" id="dtab-dash" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      📊 ড্যাশবোর্ড
+    </button>
+    <button onclick="switchTab('home_ctrl')" id="dtab-home_ctrl" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      🖼️ ব্যানার ও সারি
+    </button>
+    <button onclick="switchTab('apps')" id="dtab-apps" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      📱 অ্যাপ ও গেম
+    </button>
+    <button onclick="switchTab('users')" id="dtab-users" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      👥 ইউজার ও ডেভেলপার
+    </button>
+    <button onclick="switchTab('reviews')" id="dtab-reviews" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      ⭐ রিভিউ মডারেশন
+    </button>
+    <button onclick="switchTab('settings')" id="dtab-settings" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+      ⚙️ AI ও সেটিংস
+    </button>
+  </nav>
+
+  <!-- ডাইনামিক কন্টেন্ট এরিয়া -->
+  <main id="content" class="animate-fade"></main>
+</div>
+
+<!-- মোবাইল বটম নেভিগেশন -->
+<nav class="sm:hidden fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-[#1c211f] border-t border-slate-200 dark:border-[#2a312e] flex justify-around py-1.5 px-1 pb-[calc(6px+env(safe-area-inset-bottom,0px))]">
+  <button onclick="switchTab('dash')" id="mtab-dash" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">📊</span>ড্যাশবোর্ড
+  </button>
+  <button onclick="switchTab('home_ctrl')" id="mtab-home_ctrl" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">🖼️</span>ব্যানার
+  </button>
+  <button onclick="switchTab('apps')" id="mtab-apps" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">📱</span>অ্যাপস
+  </button>
+  <button onclick="switchTab('users')" id="mtab-users" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">👥</span>ইউজার
+  </button>
+  <button onclick="switchTab('reviews')" id="mtab-reviews" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">⭐</span>রিভিউ
+  </button>
+  <button onclick="switchTab('settings')" id="mtab-settings" class="mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium">
+    <span class="text-base mb-0.5">⚙️</span>সেটিংস
+  </button>
+</nav>
+
+<!-- অ্যাপ যোগ / এডিট করার মোডাল -->
+<div id="appModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-3 overflow-y-auto">
+  <div class="bg-white dark:bg-[#1c211f] w-full max-w-xl rounded-2xl border border-slate-200 dark:border-[#2a312e] shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div class="px-5 py-3.5 border-b border-slate-200 dark:border-[#2a312e] flex items-center justify-between">
+      <h3 id="modalTitle" class="font-bold text-lg">নতুন অ্যাপ প্রকাশ করুন</h3>
+      <button onclick="closeAppModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#2a312e] flex items-center justify-center text-slate-600 dark:text-slate-300">✕</button>
+    </div>
+    <div class="p-5 overflow-y-auto space-y-4 text-sm" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- কনফার্মেশন ও কাস্টম ডায়ালগ মোডাল -->
+<div id="dialogModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-[#1c211f] w-full max-w-sm rounded-2xl p-5 border border-slate-200 dark:border-[#2a312e] shadow-xl">
+    <h3 id="dlgTitle" class="font-bold text-lg mb-2">নিশ্চিত করুন</h3>
+    <p id="dlgMsg" class="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed"></p>
+    <div id="dlgInputWrap" class="hidden mb-4">
+      <input id="dlgInput" type="text" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-300 dark:border-[#2a312e] outline-none text-sm">
+    </div>
+    <div class="flex gap-2 justify-end">
+      <button onclick="closeDialog()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-[#2a312e] text-sm font-semibold">বাতিল</button>
+      <button id="dlgConfirmBtn" class="px-4 py-2 rounded-xl bg-[#0b8f5a] text-white text-sm font-semibold">ঠিক আছে</button>
+    </div>
+  </div>
+</div>
+
+<!-- টোস্ট নোটিফিকেশন -->
+<div id="toast" class="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2.5 rounded-full text-sm font-medium shadow-lg opacity-0 pointer-events-none transition-all duration-200"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+<script>
+/* ===== Firebase সংযোগ (অ্যাডমিন ও ইউজার ফাইল একই ডাটাবেস ব্যবহার করে) ===== */
+var FB={db:null,ready:{},last:{},started:false,A:null,imgReady:0};
+(function(){
+  var cfg={
+    apiKey:"__KEY_2__",
+    authDomain:"galaxy-icon-ai.firebaseapp.com",
+    databaseURL:"https://galaxy-icon-ai-default-rtdb.firebaseio.com",
+    projectId:"galaxy-icon-ai",
+    storageBucket:"galaxy-icon-ai.firebasestorage.app",
+    messagingSenderId:"44126661529",
+    appId:"1:44126661529:web:551bcaf7dab535e0f88108",
+    measurementId:"G-XJG47R7T4R"
+  };
+  try{
+    firebase.initializeApp(cfg);
+    FB.db=firebase.database();
+    try{firebase.analytics()}catch(e){}
+  }catch(e){console.warn("Firebase শুরু করা যায়নি:",e)}
+})();
+
+var DLC={};
+function dlText(a){return bn(DLC[a.id]||0)+" বার"}
+function fbCount(id){
+  DLC[id]=(DLC[id]||0)+1;
+  if(!FB.db)return;
+  try{FB.db.ref("downloads/"+fbEnc(id)).set(firebase.database.ServerValue.increment(1)).catch(function(e){console.warn("ডাউনলোড গণনা ব্যর্থ:",e&&e.message||e)})}catch(e){}
+}
+function fbDlWatch(){
+  FB.db.ref("downloads").on("value",function(s){
+    var v=s.val()||{},o={};
+    Object.keys(v).forEach(function(k){if(v[k]!=null)o[fbDec(k)]=+v[k]||0});
+    DLC=o;try{FB.A.assets()}catch(e){}
+  });
+}
+function fbEnc(k){return encodeURIComponent(String(k)).replace(/\./g,"%2E")}
+function fbDec(k){try{return decodeURIComponent(k)}catch(e){return k}}
+function fbClean(v){return v==null?null:JSON.parse(JSON.stringify(v))}
+function fbSort(v){
+  if(Array.isArray(v))return v.map(fbSort);
+  if(v&&typeof v=="object"){var o={};Object.keys(v).sort().forEach(function(k){if(v[k]!=null)o[k]=fbSort(v[k])});return o}
+  return v;
+}
+function fbCanon(v){return JSON.stringify(fbSort(v==null?null:v))}
+function fbObjList(v){
+  if(!v)return [];
+  if(Array.isArray(v))return v.filter(Boolean);
+  return Object.keys(v).map(function(k){return v[k]}).filter(Boolean);
+}
+function fbHL(v){
+  v=v||{};var b=[];
+  for(var i=0;i<3;i++){var x=(v.banners&&v.banners[i])||{};b.push(Object.assign({mode:"auto",appId:null,title:"",sub:""},x))}
+  return Object.assign({},v,{banners:b,popularAppIds:fbObjList(v.popularAppIds),popularGameIds:fbObjList(v.popularGameIds)});
+}
+var FB_SEC={
+  adminCfg:{
+    to:function(o){return o||null},
+    from:function(v){return v||{}},
+    empty:function(){return {}},
+    merge:function(l,r){return Object.assign({},l||{},r||{})}
+  },
+  users:{
+    to:function(a){var o={};(a||[]).forEach(function(u){if(u&&u.e)o[fbEnc(u.e)]=u});return o},
+    from:fbObjList,
+    empty:function(){return []},
+    merge:function(l,r){var s={};(r||[]).forEach(function(u){s[u.e]=1});return (r||[]).concat((l||[]).filter(function(u){return u&&u.e&&!s[u.e]}))}
+  },
+  custom:{
+    to:function(a){var o={};(a||[]).forEach(function(x){if(x&&x.id!=null)o[x.id]=x});return o},
+    from:fbObjList,
+    empty:function(){return []},
+    merge:function(l,r){var s={};(r||[]).forEach(function(x){s[x.id]=1});return (r||[]).concat((l||[]).filter(function(x){return x&&x.id!=null&&!s[x.id]}))}
+  },
+  rev:{
+    to:function(o){return o||{}},
+    from:function(v){var o={};Object.keys(v||{}).forEach(function(k){var a=fbObjList(v[k]);if(a.length)o[k]=a});return o},
+    empty:function(){return {}},
+    merge:function(l,r){return Object.assign({},l||{},r||{})}
+  },
+  overrides:{
+    to:function(o){return o||{}},
+    from:function(v){return v||{}},
+    empty:function(){return {}},
+    merge:function(l,r){return Object.assign({},l||{},r||{})}
+  },
+  homeLayout:{
+    to:function(v){return v||null},
+    from:fbHL,
+    empty:function(){return fbHL(null)},
+    merge:function(l,r){return r||l}
+  }
+};
+
+function fbPushSec(sec,val){
+  if(!FB.db)return;
+  if(FB.A&&FB.A.ro&&FB.A.ro.indexOf(sec)>=0)return;
+  try{
+    FB.db.ref("shared/"+sec).set(fbClean(FB_SEC[sec].to(val))).catch(function(e){console.warn("Firebase সেভ ব্যর্থ ("+sec+"):",e&&e.message||e)});
+  }catch(e){console.warn(e)}
+}
+/* লোকাল সেভ হলে ডাটাবেসে পাঠায় */
+function fbPush(){
+  if(!FB.db||!FB.A)return;
+  Object.keys(FB_SEC).forEach(function(sec){
+    if(!FB.ready[sec])return;
+    var v=FB.A.get(sec),c=fbCanon(FB_SEC[sec].to(v));
+    if(c===FB.last[sec])return;
+    FB.last[sec]=c;fbPushSec(sec,v);
+  });
+}
+
+/* ছবি/ফাইল — লোকাল IndexedDB হেল্পার (আবার আপলোড ট্রিগার করে না) */
+function fbLocalPut(key,val){try{if(DB)DB.transaction("f","readwrite").objectStore("f").put(val,key)}catch(e){}}
+function fbLocalDel(key){try{if(DB)DB.transaction("f","readwrite").objectStore("f").delete(key)}catch(e){}}
+
+function fbAssetPut(key,val){
+  if(!FB.db)return;
+  try{
+    if(typeof val==="string")FB.db.ref("img/"+fbEnc(key)).set(val).catch(function(e){console.warn("ছবি আপলোড ব্যর্থ:",e&&e.message||e)});
+    else if(val&&val.size!=null&&String(key).indexOf("file:")==0)fbFilePut(key,val);
+  }catch(e){console.warn(e)}
+}
+function fbAssetDel(key){
+  if(!FB.db)return;
+  try{
+    if(String(key).indexOf("file:")==0){var ek=fbEnc(String(key).slice(5));FB.db.ref("files/"+ek).remove();FB.db.ref("filechunks/"+ek).remove()}
+    else FB.db.ref("img/"+fbEnc(key)).remove();
+  }catch(e){}
+}
+function fbFilePut(key,blob){
+  var id=String(key).slice(5),ek=fbEnc(id),fr=new FileReader();
+  fr.onload=function(){
+    var s=String(fr.result),CH=800000,n=Math.ceil(s.length/CH),v=Date.now(),ps=[];
+    FB.db.ref("filechunks/"+ek).remove().then(function(){
+      for(var i=0;i<n;i++)ps.push(FB.db.ref("filechunks/"+ek+"/c"+i).set(s.substr(i*CH,CH)));
+      return Promise.all(ps);
+    }).then(function(){
+      try{localStorage.setItem("fbfv:"+id,String(v))}catch(e){}
+      return FB.db.ref("files/"+ek).set({n:blob.name||"",c:n,v:v});
+    }).catch(function(e){console.warn("Firebase ফাইল আপলোড ব্যর্থ:",e&&e.message||e)});
+  };
+  fr.readAsDataURL(blob);
+}
+function fbFileGet(id,cb){
+  if(!FB.db)return cb(null);
+  var ek=fbEnc(id);
+  FB.db.ref("files/"+ek).once("value").then(function(m){
+    if(!m.exists())return cb(null);
+    var n=m.val().c;
+    return FB.db.ref("filechunks/"+ek).once("value").then(function(s){
+      var o=s.val()||{},t="";
+      for(var i=0;i<n;i++){if(o["c"+i]==null)return cb(null);t+=o["c"+i]}
+      return fetch(t).then(function(r){return r.blob()}).then(function(b){cb(b)});
+    });
+  }).catch(function(){cb(null)});
+}
+function fbMigFiles(){
+  if(!DB||!FB.db)return;
+  try{
+    var q=DB.transaction("f").objectStore("f").openCursor();
+    q.onsuccess=function(){
+      var c=q.result;if(!c)return;
+      if(typeof c.value!="string"&&String(c.key).indexOf("file:")==0){
+        (function(key,val){
+          FB.db.ref("files/"+fbEnc(key.slice(5))).once("value").then(function(s){if(!s.exists())fbFilePut(key,val)});
+        })(c.key,c.value);
+      }
+      c.continue();
+    };
+  }catch(e){}
+}
+var fbSoftT=null;
+function fbSoft(){clearTimeout(fbSoftT);fbSoftT=setTimeout(function(){try{FB.A.assets()}catch(e){}},300)}
+
+function fbAssets(){
+  FB.db.ref("img").on("value",function(snap){
+    var rem=snap.val()||{},first=!FB.imgReady,ch=0;
+    FB.imgReady=1;
+    Object.keys(rem).forEach(function(ek){
+      var key=fbDec(ek);
+      if(IMG[key]!==rem[ek]){IMG[key]=rem[ek];fbLocalPut(key,rem[ek]);ch=1}
+    });
+    Object.keys(IMG).forEach(function(key){
+      if(rem[fbEnc(key)]==null){
+        if(first)fbAssetPut(key,IMG[key]);
+        else{delete IMG[key];fbLocalDel(key);ch=1}
+      }
+    });
+    if(ch)fbSoft();
+  },function(e){console.warn("Firebase ছবি পড়া ব্যর্থ:",e&&e.message||e)});
+  FB.db.ref("files").on("value",function(snap){
+    var m=snap.val()||{};
+    Object.keys(m).forEach(function(ek){
+      var id=fbDec(ek),v=String((m[ek]&&m[ek].v)||0),k="fbfv:"+id,old=null;
+      try{old=localStorage.getItem(k)}catch(e){}
+      if(old!==v){if(old!==null)fbLocalDel("file:"+id);try{localStorage.setItem(k,v)}catch(e){}}
+    });
+  });
+  fbMigFiles();
+}
+
+/* চালু করার ফাংশন — লোকাল ডাটা লোড হওয়ার পর ডাকতে হবে */
+function fbStart(){
+  if(!FB.db||!FB.A||FB.started)return;
+  FB.started=true;
+  Object.keys(FB_SEC).forEach(function(sec){
+    var S2=FB_SEC[sec];
+    FB.db.ref("shared/"+sec).on("value",function(snap){
+      var rv=snap.exists()?S2.from(snap.val()):null,loc=FB.A.get(sec),nv;
+      if(!FB.ready[sec]){
+        FB.ready[sec]=1;
+        nv=S2.merge(loc,rv);
+        var rc=fbCanon(rv==null?null:S2.to(rv)),nc=fbCanon(S2.to(nv));
+        if(rc!==nc)fbPushSec(sec,nv);
+        FB.last[sec]=nc;
+      }else{
+        nv=rv==null?S2.empty():rv;
+        FB.last[sec]=fbCanon(S2.to(nv));
+      }
+      if(fbCanon(S2.to(nv))!==fbCanon(S2.to(loc))){
+        FB.A.set(sec,nv);FB.A.persist();
+        try{FB.A.refresh()}catch(e){}
+      }
+    },function(e){console.warn("Firebase পড়া ব্যর্থ ("+sec+"):",e&&e.message||e)});
+  });
+  fbAssets();
+  fbDlWatch();
+}
+function fbTyping(sel){var ae=document.activeElement;return !!(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)&&document.querySelector(sel)&&document.querySelector(sel).contains(ae))}
+</script>
+<script>
+const DEFAULT_APPS = [
+  {id:1,n:"চ্যাটবন্ধু",d:"বন্ধুসভা লিমিটেড",t:"app",c:"যোগাযোগ",r:4.6,dl:"৫ কোটি+",sz:42,e:"💬",g:["#12b886","#0b7285"],ds:"বন্ধু ও পরিবারের সাথে বিনামূল্যে মেসেজ, ভয়েস ও ভিডিও কল করুন। গ্রুপ চ্যাট, ছবি ও ফাইল পাঠানোর সুবিধা আছে।"},
+  {id:2,n:"পথদিশা মানচিত্র",d:"পথদিশা টেক",t:"app",c:"ভ্রমণ",r:4.5,dl:"১০ কোটি+",sz:78,e:"🗺️",g:["#4dabf7","#1864ab"],ds:"সঠিক রাস্তা, যানজটের খবর ও অফলাইন মানচিত্র। বাস, রিকশা ও হাঁটার পথ দেখুন।"},
+  {id:3,n:"সুরলহরী",d:"সুর স্টুডিও",t:"app",c:"সঙ্গীত",r:4.4,dl:"২ কোটি+",sz:55,e:"🎧",g:["#f06595","#862e9c"],ds:"নিজের ফোনের গান বেছে নিয়ে প্লেয়ারে শুনুন। প্লেলিস্ট বানান, পরের/আগের গানে যান।"},
+  {id:4,n:"ক্যাশবুক",d:"হিসাব ঘর",t:"app",c:"আর্থিক",r:4.7,dl:"১ কোটি+",sz:24,e:"💰",g:["#fab005","#e67700"],ds:"প্রতিদিনের আয়-ব্যয়ের হিসাব রাখুন। মোট জমা, খরচ ও বর্তমান ব্যালান্স দেখুন। তথ্য ফোনেই সেভ থাকে।"},
+  {id:5,n:"ফটোরঙ",d:"রঙ ল্যাব",t:"app",c:"ফটোগ্রাফি",r:4.3,dl:"৫০ লক্ষ+",sz:96,e:"🎨",g:["#ff8787","#e8590c"],ds:"গ্যালারি থেকে ছবি নিয়ে ফিল্টার, উজ্জ্বলতা, কনট্রাস্ট ও ব্লার দিয়ে এডিট করুন এবং ফোনে সেভ করুন।"},
+  {id:6,n:"স্বাস্থ্যসাথী",d:"সুস্থ জীবন",t:"app",c:"স্বাস্থ্য",r:4.5,dl:"৮০ লক্ষ+",sz:33,e:"❤️",g:["#ff6b6b","#c92a2a"],ds:"পানি পান, হাঁটা ও ঘুমের হিসাব রাখুন। প্রতিদিনের লক্ষ্য ও অগ্রগতি দেখুন।"},
+  {id:7,n:"পড়ুয়া",d:"শিক্ষা ঘর",t:"app",c:"শিক্ষা",r:4.8,dl:"৩ কোটি+",sz:61,e:"📚",g:["#845ef7","#5f3dc4"],ds:"সাধারণ জ্ঞান ও গণিতের কুইজ খেলুন। উত্তর দিলেই সাথে সাথে ফলাফল ও স্কোর পাবেন।"},
+  {id:8,n:"খবর২৪",d:"সংবাদ প্রতিদিন",t:"app",c:"খবর",r:4.2,dl:"১ কোটি+",sz:29,e:"📰",g:["#868e96","#343a40"],ds:"দেশ-বিদেশের সর্বশেষ খবর, ব্রেকিং নোটিফিকেশন ও লাইভ আপডেট।"},
+  {id:9,n:"লুডো কিং",d:"খেলাঘর",t:"game",c:"বোর্ড",r:4.6,dl:"১০ কোটি+",sz:68,e:"🎲",g:["#ff922b","#d9480f"],ds:"কম্পিউটারের সাথে ছক্কা ফেলে দৌড়ের খেলা। ছক্কা পেলে আবার চাল। আগে শেষে পৌঁছালেই জয়!"},
+  {id:10,n:"সাপের দৌড়",d:"পিক্সেল পাড়া",t:"game",c:"আর্কেড",r:4.3,dl:"২ কোটি+",sz:18,e:"🐍",g:["#51cf66","#2b8a3e"],ds:"ক্লাসিক স্নেক গেম। সোয়াইপ করে সাপ চালান, খাবার খান, লম্বা হোন, দেয়ালে ধাক্কা খাবেন না!"},
+  {id:11,n:"রেসিং রাজা",d:"গতি গেমস",t:"game",c:"রেসিং",r:4.5,dl:"৫ কোটি+",sz:210,e:"🏎️",g:["#fa5252","#7048e8"],ds:"তিন লেনের রাস্তায় গাড়ি চালান। বাধা এড়িয়ে যতদূর পারেন যান, গতি বাড়তেই থাকবে।"},
+  {id:12,n:"শব্দজাল",d:"শব্দ স্টুডিও",t:"game",c:"শব্দ",r:4.7,dl:"৪০ লক্ষ+",sz:21,e:"🔤",g:["#22b8cf","#1971c2"],ds:"এলোমেলো অক্ষর সাজিয়ে সঠিক শব্দ বানান। হিন্ট নিন, স্কোর বাড়ান।"},
+  {id:13,n:"কুস্তি চ্যাম্প",d:"আখড়া গেমস",t:"game",c:"অ্যাকশন",r:4.1,dl:"৩০ লক্ষ+",sz:150,e:"🤼",g:["#e8590c","#862e9c"],ds:"আখড়ায় নামুন, প্রতিপক্ষকে হারান ও চ্যাম্পিয়নশিপ জিতুন।"},
+  {id:14,n:"দাবা মাস্টার",d:"বুদ্ধি ঘর",t:"game",c:"বোর্ড",r:4.8,dl:"১ কোটি+",sz:35,e:"♟️",g:["#495057","#212529"],ds:"একই ফোনে বন্ধুর সাথে দাবা খেলুন। ঘুঁটি ট্যাপ করে চাল দিন, কিস্তি ও মাত নিজেরা দেখে নিন।"}
+];
+
+const CATS = ["যোগাযোগ","ভ্রমণ","সঙ্গীত","আর্থিক","ফটোগ্রাফি","স্বাস্থ্য","শিক্ষা","খবর","বোর্ড","আর্কেড","রেসিং","শব্দ","অ্যাকশন","অন্যান্য"];
+
+let state = {
+  tab: 'dash',
+  appFilter: 'all',
+  appSearch: '',
+  userSearch: '',
+  bannerSearch: ['', '', ''],
+  popAppSearch: '',
+  popGameSearch: '',
+  store: {
+    inst: {},
+    rev: {},
+    users: [],
+    me: null,
+    custom: [],
+    overrides: {},
+    homeLayout: {
+      banners: [
+        { mode: 'auto', appId: null, title: '', sub: '' },
+        { mode: 'auto', appId: null, title: '', sub: '' },
+        { mode: 'auto', appId: null, title: '', sub: '' }
+      ],
+      popularAppIds: [],
+      popularGameIds: []
+    },
+    adminCfg: {
+      gkey: "__KEY_1__",
+      creator: "শ্রাবণ স্যার",
+      storeName: "Galaxy Icon Ai",
+      customPrompt: ""
+    }
+  }
+};
+
+let DB = null;
+let IMG = {};
+let tempFiles = {};
+
+const $ = id => document.getElementById(id);
+const bn = n => String(n).replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+const esc = t => String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.remove('opacity-0', 'translate-y-2');
+  t.classList.add('opacity-100', 'translate-y-0');
+  clearTimeout(toast.tm);
+  toast.tm = setTimeout(() => {
+    t.classList.add('opacity-0', 'translate-y-2');
+    t.classList.remove('opacity-100', 'translate-y-0');
+  }, 2500);
+}
+
+function hashPass(t) {
+  let h = 5381;
+  for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+  return String(h);
+}
+
+function openIDB() {
+  return new Promise(resolve => {
+    try {
+      const req = indexedDB.open("appbazar2", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("f");
+      req.onsuccess = () => { DB = req.result; resolve(); };
+      req.onerror = () => resolve();
+    } catch (e) { resolve(); }
+  });
+}
+
+function loadImagesFromIDB() {
+  return new Promise(resolve => {
+    if (!DB) return resolve();
+    try {
+      IMG = {};
+      const tx = DB.transaction("f", "readonly");
+      const req = tx.objectStore("f").openCursor();
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (cursor) {
+          if (typeof cursor.value === "string") IMG[cursor.key] = cursor.value;
+          cursor.continue();
+        } else resolve();
+      };
+      req.onerror = () => resolve();
+    } catch (e) { resolve(); }
+  });
+}
+
+function putIDB(key, val) {
+  fbAssetPut(key, val);
+  return new Promise(resolve => {
+    if (!DB) return resolve(false);
+    try {
+      const tx = DB.transaction("f", "readwrite");
+      tx.objectStore("f").put(val, key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = tx.onabort = () => resolve(false);
+    } catch (e) { resolve(false); }
+  });
+}
+
+function delIDB(key) {
+  fbAssetDel(key);
+  if (!DB) return;
+  try {
+    DB.transaction("f", "readwrite").objectStore("f").delete(key);
+    delete IMG[key];
+  } catch (e) {}
+}
+
+function loadLocalStore() {
+  try {
+    const raw = JSON.parse(localStorage.getItem("appbazar") || "{}");
+    state.store.inst = raw.inst || {};
+    state.store.rev = raw.rev || {};
+    state.store.users = raw.users || [];
+    state.store.me = raw.me || null;
+    state.store.custom = raw.custom || [];
+    state.store.overrides = raw.overrides || {};
+    if (raw.homeLayout) {
+      state.store.homeLayout = {
+        banners: raw.homeLayout.banners && raw.homeLayout.banners.length === 3
+          ? raw.homeLayout.banners
+          : [
+              { mode: 'auto', appId: null, title: '', sub: '' },
+              { mode: 'auto', appId: null, title: '', sub: '' },
+              { mode: 'auto', appId: null, title: '', sub: '' }
+            ],
+        popularAppIds: Array.isArray(raw.homeLayout.popularAppIds) ? raw.homeLayout.popularAppIds : [],
+        popularGameIds: Array.isArray(raw.homeLayout.popularGameIds) ? raw.homeLayout.popularGameIds : []
+      };
+    }
+    if (raw.adminCfg) {
+      state.store.adminCfg = { ...state.store.adminCfg, ...raw.adminCfg };
+    }
+  } catch (e) {
+    console.error("Storage load error:", e);
+  }
+}
+
+function saveLocalStore() {
+  setTimeout(fbPush, 0);
+  try {
+    localStorage.setItem("appbazar", JSON.stringify(state.store));
+  } catch (e) {
+    toast("⚠️ স্টোরেজে সেভ করতে সমস্যা হয়েছে!");
+  }
+}
+
+async function syncAll(notify = false) {
+  loadLocalStore();
+  await loadImagesFromIDB();
+  render();
+  if (notify) toast("✅ সব ডাটা আপডেট করা হয়েছে");
+}
+
+window.addEventListener('storage', e => {
+  if (e.key === 'appbazar') {
+    loadLocalStore();
+    render();
+  }
+});
+
+function getAllApps() {
+  const ov = state.store.overrides || {};
+  const defaults = DEFAULT_APPS
+    .filter(a => !(ov[a.id] && ov[a.id].deleted))
+    .map(a => ({ ...a, ...(ov[a.id] || {}), isDefault: true }));
+  const customs = (state.store.custom || []).map(a => ({ ...a, isDefault: false }));
+  return [...defaults, ...customs];
+}
+
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#262d2a]";
+  });
+  document.querySelectorAll('.mtab-btn').forEach(b => {
+    b.className = "mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-medium text-slate-500 dark:text-slate-400";
+  });
+
+  const dBtn = $('dtab-' + tab);
+  if (dBtn) dBtn.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 bg-[#e6f5ee] dark:bg-[#1d3a2e] text-[#0b8f5a] dark:text-[#3ddc97]";
+  
+  const mBtn = $('mtab-' + tab);
+  if (mBtn) mBtn.className = "mtab-btn flex flex-col items-center py-1 px-1.5 rounded-xl text-[10px] font-bold bg-[#e6f5ee] dark:bg-[#1d3a2e] text-[#0b8f5a] dark:text-[#3ddc97]";
+
+  render();
+}
+
+function render() {
+  const container = $('content');
+  if (state.tab === 'dash') container.innerHTML = renderDashboard();
+  else if (state.tab === 'home_ctrl') container.innerHTML = renderHomeLayoutManager();
+  else if (state.tab === 'apps') container.innerHTML = renderAppsManager();
+  else if (state.tab === 'users') container.innerHTML = renderUsersManager();
+  else if (state.tab === 'reviews') container.innerHTML = renderReviewsManager();
+  else if (state.tab === 'settings') container.innerHTML = renderSettings();
+}
+
+function renderDashboard() {
+  const apps = getAllApps();
+  const totalApps = apps.filter(a => a.t === 'app').length;
+  const totalGames = apps.filter(a => a.t === 'game').length;
+  const lockedCount = apps.filter(a => a.lock).length;
+  const users = state.store.users || [];
+  const devCount = users.filter(u => u.t === 'dev').length;
+  const instCount = Object.keys(state.store.inst || {}).length;
+  let revCount = 0;
+  Object.values(state.store.rev || {}).forEach(arr => revCount += arr.length);
+
+  return `
+    <div class="space-y-5">
+      <div class="bg-gradient-to-r from-[#0b8f5a] to-[#0b7285] rounded-2xl p-5 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-semibold mb-1.5">সিস্টেম সচল আছে 🟢</span>
+          <h2 class="text-xl sm:text-2xl font-bold">স্বাগতম, ${esc(state.store.adminCfg.creator)}!</h2>
+          <p class="text-white/90 text-sm mt-1">এখান থেকে <b>${esc(state.store.adminCfg.storeName)}</b> স্টোরের সব অ্যাপ, ব্যানার, ইউজার, রিভিউ ও AI নিয়ন্ত্রণ করুন।</p>
+        </div>
+        <button onclick="openAppModal()" class="px-4 py-2.5 rounded-xl bg-white text-[#0b8f5a] font-bold text-sm shadow hover:bg-slate-50 transition self-start sm:self-center shrink-0">
+          ➕ নতুন অ্যাপ যোগ করুন
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <span>মোট অ্যাপ ও গেম</span>
+            <span class="text-lg">📱</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold mt-2">${bn(apps.length)}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">অ্যাপ ${bn(totalApps)}টি • গেম ${bn(totalGames)}টি</div>
+        </div>
+
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <span>মোট অ্যাকাউন্ট</span>
+            <span class="text-lg">👥</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold mt-2">${bn(users.length)}</div>
+          <div class="text-xs text-[#0b8f5a] dark:text-[#3ddc97] mt-1">ডেভেলপার ${bn(devCount)} জন</div>
+        </div>
+
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <span>ইনস্টলকৃত অ্যাপ</span>
+            <span class="text-lg">📥</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold mt-2">${bn(instCount)}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">বর্তমান ডিভাইসে সক্রিয়</div>
+        </div>
+
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <span>ইউজার রিভিউ</span>
+            <span class="text-lg">⭐</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold mt-2">${bn(revCount)}</div>
+          <div class="text-xs text-amber-600 dark:text-amber-400 mt-1">লক করা অ্যাপ: ${bn(lockedCount)}টি</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e]">
+          <h3 class="font-bold text-base mb-3 flex items-center justify-between">
+            <span>⚡ দ্রুত কন্ট্রোল</span>
+          </h3>
+          <div class="grid grid-cols-2 gap-2.5 text-sm">
+            <button onclick="switchTab('home_ctrl')" class="p-3 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] text-left transition">
+              <div class="text-lg mb-1">🖼️</div>
+              <div class="font-semibold">ব্যানার ও সারি</div>
+              <div class="text-xs text-slate-500">হোম ব্যানার ও পপুলার</div>
+            </button>
+            <button onclick="openAppModal()" class="p-3 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] text-left transition">
+              <div class="text-lg mb-1">📦</div>
+              <div class="font-semibold">অ্যাপ প্রকাশ</div>
+              <div class="text-xs text-slate-500">HTML বা APK যোগ করুন</div>
+            </button>
+            <button onclick="switchTab('users')" class="p-3 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] text-left transition">
+              <div class="text-lg mb-1">💻</div>
+              <div class="font-semibold">ডেভেলপার অনুমোদন</div>
+              <div class="text-xs text-slate-500">ইউজার রোল পরিবর্তন</div>
+            </button>
+            <button onclick="switchTab('reviews')" class="p-3 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] text-left transition">
+              <div class="text-lg mb-1">🛡️</div>
+              <div class="font-semibold">রিভিউ মডারেশন</div>
+              <div class="text-xs text-slate-500">স্প্যাম মন্তব্য মুছুন</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e]">
+          <h3 class="font-bold text-base mb-3 flex items-center justify-between">
+            <span>🆕 কাস্টম প্রকাশিত অ্যাপ (${bn((state.store.custom||[]).length)})</span>
+            <button onclick="switchTab('apps')" class="text-xs text-[#0b8f5a] dark:text-[#3ddc97] font-semibold">সব দেখুন →</button>
+          </h3>
+          ${(state.store.custom && state.store.custom.length) ? `
+            <div class="space-y-2.5">
+              ${state.store.custom.slice(-3).reverse().map(a => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#252b29]">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    ${renderAppIcon(a, 'w-10 h-10 text-xl')}
+                    <div class="min-w-0">
+                      <div class="font-semibold text-sm truncate">${esc(a.n)}</div>
+                      <div class="text-xs text-slate-500 truncate">${esc(a.d)} • ${a.ft ? a.ft.toUpperCase() : 'APP'}</div>
+                    </div>
+                  </div>
+                  <button onclick="openAppModal(${a.id})" class="px-2.5 py-1 rounded-lg bg-white dark:bg-[#1c211f] border border-slate-200 dark:border-[#2a312e] text-xs font-semibold">এডিট</button>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <div class="text-center py-8 text-slate-500 text-sm">
+              এখনও কোনো কাস্টম অ্যাপ প্রকাশ করা হয়নি।
+            </div>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== সরাসরি সার্চ ও সিলেক্ট লিস্টসহ ব্যানার ও সারি কন্ট্রোল ====================
+function renderHomeLayoutManager() {
+  const apps = getAllApps().filter(a => !a.lock);
+  const onlyApps = apps.filter(a => a.t === 'app');
+  const onlyGames = apps.filter(a => a.t === 'game');
+  const hl = state.store.homeLayout;
+
+  const popAppIds = hl.popularAppIds || [];
+  const popGameIds = hl.popularGameIds || [];
+
+  const popAppList = popAppIds.map(id => apps.find(a => a.id == id)).filter(Boolean);
+  const popGameList = popGameIds.map(id => apps.find(a => a.id == id)).filter(Boolean);
+
+  // সার্চ ফিল্টার অনুযায়ী অ্যাপ ও গেম লিস্ট
+  const qPopApp = (state.popAppSearch || '').trim().toLowerCase();
+  const availPopApps = onlyApps.filter(a => !popAppIds.includes(a.id) && (!qPopApp || (a.n + ' ' + a.c).toLowerCase().includes(qPopApp)));
+
+  const qPopGame = (state.popGameSearch || '').trim().toLowerCase();
+  const availPopGames = onlyGames.filter(a => !popGameIds.includes(a.id) && (!qPopGame || (a.n + ' ' + a.c).toLowerCase().includes(qPopGame)));
+
+  return `
+    <div class="space-y-6">
+      <!-- উপরের ৩টি হিরো ব্যানার কন্ট্রোল -->
+      <div class="bg-white dark:bg-[#1c211f] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">🖼️ উপরের হিরো ব্যানার কন্ট্রোল (৩টি স্লট)</h2>
+          <p class="text-xs text-slate-500 mt-0.5">প্রতিটি ব্যানারে সরাসরি সার্চ করে যেকোনো অ্যাপ সিলেক্ট করুন অথবা গ্যালারি থেকে ছবি দিন।</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          ${[0, 1, 2].map(idx => {
+            const slot = hl.banners[idx] || { mode: 'auto', appId: null, title: '', sub: '' };
+            const selectedApp = slot.appId ? apps.find(a => a.id == slot.appId) : null;
+            const customBannerImg = IMG["hero_banner:" + idx];
+            const appBannerPreview = selectedApp ? (IMG["b1:" + selectedApp.id] || IMG["b2:" + selectedApp.id] || IMG["b3:" + selectedApp.id] || IMG["logo:" + selectedApp.id]) : null;
+            const bQuery = (state.bannerSearch[idx] || '').trim().toLowerCase();
+            const filteredBannerApps = apps.filter(a => !bQuery || (a.n + ' ' + a.c).toLowerCase().includes(bQuery));
+
+            return `
+              <div class="rounded-2xl border border-slate-200 dark:border-[#2a312e] bg-slate-50 dark:bg-[#121513] p-3.5 space-y-3 flex flex-col">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-sm text-[#0b8f5a] dark:text-[#3ddc97]">ব্যানার স্লট #${bn(idx + 1)}</span>
+                  <select onchange="changeBannerMode(${idx}, this.value)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-[#1c211f] border border-slate-200 dark:border-[#2a312e] text-xs font-semibold outline-none">
+                    <option value="auto" ${slot.mode === 'auto' ? 'selected' : ''}>✨ অটো (সেরা অ্যাপ)</option>
+                    <option value="app" ${slot.mode === 'app' ? 'selected' : ''}>📱 নির্দিষ্ট অ্যাপ শো</option>
+                    <option value="image" ${slot.mode === 'image' ? 'selected' : ''}>🖼️ গ্যালারি ছবি</option>
+                  </select>
+                </div>
+
+                ${slot.mode === 'image' ? `
+                  <label class="relative aspect-[16/9] w-full rounded-xl border-2 border-dashed border-[#0b8f5a]/60 bg-white dark:bg-[#1c211f] overflow-hidden cursor-pointer grid place-items-center group">
+                    <input type="file" accept="image/*" class="hidden" onchange="uploadHeroBannerImage(this, ${idx})">
+                    ${customBannerImg
+                      ? `<img src="${customBannerImg}" class="w-full h-full object-cover" alt="">
+                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition grid place-items-center text-white text-xs font-bold">📷 ছবি পরিবর্তন করুন</div>`
+                      : `<div class="text-center p-3 text-slate-500 text-xs">
+                           <div class="text-2xl mb-1">🖼️</div>
+                           <div class="font-semibold text-[#0b8f5a]">ট্যাপ করে গ্যালারি থেকে ব্যানার যোগ করুন</div>
+                         </div>`
+                    }
+                  </label>
+                  <input type="text" value="${esc(slot.title || '')}" onchange="updateBannerMeta(${idx}, 'title', this.value)" placeholder="ব্যানারের শিরোনাম (ঐচ্ছিক)" class="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-[#1c211f] border border-slate-200 dark:border-[#2a312e] text-xs outline-none">
+                  
+                  <!-- সরাসরি সার্চ করে লিংক করার অ্যাপ লিস্ট -->
+                  <div class="space-y-1.5">
+                    <input type="text" value="${esc(state.bannerSearch[idx] || '')}" oninput="updateBannerSearch(${idx}, this.value)" placeholder="🔍 ক্লিক করলে কোন অ্যাপ খুলবে খুঁজুন..." class="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-[#1c211f] border border-slate-200 dark:border-[#2a312e] text-xs outline-none">
+                    <div class="max-h-36 overflow-y-auto space-y-1 pr-0.5">
+                      ${filteredBannerApps.map(a => {
+                        const isSel = slot.appId == a.id;
+                        return `
+                          <button type="button" onclick="updateBannerMeta(${idx}, 'appId', ${isSel ? 'null' : a.id})" class="w-full flex items-center justify-between p-1.5 rounded-lg text-left transition ${isSel ? 'bg-[#0b8f5a] text-white' : 'bg-white dark:bg-[#1c211f] hover:bg-slate-100 dark:hover:bg-[#252b29]'}">
+                            <div class="flex items-center gap-2 min-w-0">
+                              ${renderAppIcon(a, 'w-7 h-7 text-sm')}
+                              <div class="min-w-0">
+                                <div class="text-xs font-semibold truncate">${esc(a.n)}</div>
+                                <div class="text-[10px] ${isSel ? 'text-white/85' : 'text-slate-500'}">${a.t === 'game' ? 'গেম' : 'অ্যাপ'} • ${esc(a.c)}</div>
+                              </div>
+                            </div>
+                            <span class="text-[11px] font-bold px-1.5 shrink-0">${isSel ? '✓ যুক্ত' : '+ সিলেক্ট'}</span>
+                          </button>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                ` : slot.mode === 'app' ? `
+                  <div class="space-y-2.5 flex-1 flex flex-col">
+                    <div class="relative aspect-[16/9] w-full rounded-xl overflow-hidden grid place-items-center text-white p-3 shrink-0" style="background:${selectedApp ? `linear-gradient(135deg,${(selectedApp.g&&selectedApp.g[0])||'#12b886'},${(selectedApp.g&&selectedApp.g[1])||'#0b7285'})` : '#334155'}">
+                      ${appBannerPreview ? `<img src="${appBannerPreview}" class="absolute inset-0 w-full h-full object-cover opacity-85" alt="">` : ''}
+                      <div class="relative z-10 text-center drop-shadow">
+                        ${selectedApp
+                          ? `<div class="text-2xl mb-0.5">${selectedApp.e || '📦'}</div>
+                             <div class="font-bold text-sm">${esc(selectedApp.n)}</div>
+                             <div class="text-[11px] opacity-90">অ্যাপের ৩টি ব্যানার স্লাইড হবে</div>`
+                          : `<div class="text-xs opacity-80">নিচের তালিকা থেকে অ্যাপ সিলেক্ট করুন</div>`
+                        }
+                      </div>
+                    </div>
+
+                    <!-- সরাসরি সার্চ ও অ্যাপ লিস্ট -->
+                    <input type="text" value="${esc(state.bannerSearch[idx] || '')}" oninput="updateBannerSearch(${idx}, this.value)" placeholder="🔍 অ্যাপের নাম লিখে খুঁজুন..." class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#1c211f] border border-slate-200 dark:border-[#2a312e] text-xs outline-none">
+                    <div class="max-h-44 overflow-y-auto space-y-1.5 pr-0.5">
+                      ${filteredBannerApps.length ? filteredBannerApps.map(a => {
+                        const isSel = slot.appId == a.id;
+                        return `
+                          <button type="button" onclick="updateBannerMeta(${idx}, 'appId', ${a.id})" class="w-full flex items-center justify-between p-2 rounded-xl text-left border transition ${isSel ? 'bg-[#e6f5ee] dark:bg-[#1d3a2e] border-[#0b8f5a]' : 'bg-white dark:bg-[#1c211f] border-slate-200/70 dark:border-[#2a312e] hover:border-[#0b8f5a]/50'}">
+                            <div class="flex items-center gap-2 min-w-0">
+                              ${renderAppIcon(a, 'w-8 h-8 text-base')}
+                              <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">${esc(a.n)}</div>
+                                <div class="text-[10px] text-slate-500">${esc(a.c)} • ${bn(a.r)} ★</div>
+                              </div>
+                            </div>
+                            <span class="px-2 py-1 rounded-lg text-[10px] font-bold shrink-0 ${isSel ? 'bg-[#0b8f5a] text-white' : 'bg-slate-100 dark:bg-[#252b29] text-slate-700 dark:text-slate-300'}">
+                              ${isSel ? '✓ সিলেক্টেড' : 'সিলেক্ট'}
+                            </span>
+                          </button>
+                        `;
+                      }).join('') : `<div class="text-center py-3 text-xs text-slate-500">কোনো অ্যাপ পাওয়া যায়নি</div>`}
+                    </div>
+                  </div>
+                ` : `
+                  <div class="aspect-[16/9] w-full rounded-xl bg-slate-200/70 dark:bg-[#1c211f] border border-dashed border-slate-300 dark:border-[#2a312e] grid place-items-center text-center p-3 text-xs text-slate-500">
+                    <div>
+                      <div class="text-xl mb-1">✨</div>
+                      <div>স্বয়ংক্রিয়ভাবে স্টোরের সেরা রেটিংয়ের অ্যাপ দেখাবে</div>
+                    </div>
+                  </div>
+                `}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- নিচের দুই সারি: জনপ্রিয় অ্যাপ ও সেরা গেম কন্ট্রোল -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- সারি ১: জনপ্রিয় অ্যাপ -->
+        <div class="bg-white dark:bg-[#1c211f] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-3.5">
+          <div>
+            <h3 class="font-bold text-base flex items-center gap-2">📱 নিচের সারি ১: জনপ্রিয় অ্যাপ</h3>
+            <p class="text-xs text-slate-500">নিচ থেকে অ্যাপের নাম লিখে সার্চ করুন এবং সরাসরি ট্যাপ করে সারিতে যুক্ত করুন।</p>
+          </div>
+
+          <!-- যুক্ত করা অ্যাপগুলোর তালিকা -->
+          ${popAppList.length ? `
+            <div class="space-y-2">
+              <div class="text-xs font-bold text-[#0b8f5a] dark:text-[#3ddc97]">✅ সারিতে যুক্ত করা অ্যাপ (${bn(popAppList.length)}টি):</div>
+              ${popAppList.map((a, i) => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#e6f5ee]/60 dark:bg-[#1d3a2e]/50 border border-[#0b8f5a]/30">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-xs font-bold text-[#0b8f5a] w-4">${bn(i + 1)}.</span>
+                    ${renderAppIcon(a, 'w-9 h-9 text-lg')}
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm truncate">${esc(a.n)}</div>
+                      <div class="text-[11px] text-slate-500">${esc(a.c)} • ${bn(a.r)} ★</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="movePopularItem('popularAppIds', ${i}, -1)" class="w-7 h-7 rounded-lg bg-white dark:bg-[#1c211f] text-xs shadow-2xs" title="উপরে নিন">⬆️</button>
+                    <button onclick="movePopularItem('popularAppIds', ${i}, 1)" class="w-7 h-7 rounded-lg bg-white dark:bg-[#1c211f] text-xs shadow-2xs" title="নিচে নিন">⬇️</button>
+                    <button onclick="removeFromPopularRow('popularAppIds', ${a.id})" class="w-7 h-7 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold" title="বাদ দিন">✕</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <div class="text-center py-3 text-xs text-slate-500 bg-slate-50 dark:bg-[#121513] rounded-xl">
+              এখনও কোনো নির্দিষ্ট অ্যাপ যোগ করা হয়নি (ডিফল্ট ক্রমে দেখাচ্ছে)।
+            </div>
+          `}
+
+          <!-- সার্চ বক্স ও সরাসরি সিলেক্ট করার জন্য অ্যাপ তালিকা -->
+          <div class="pt-2 border-t border-slate-200 dark:border-[#2a312e] space-y-2">
+            <input type="text" value="${esc(state.popAppSearch)}" oninput="updatePopSearch('popAppSearch', this.value)" placeholder="🔍 অ্যাপের নাম লিখে সার্চ করুন..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] focus:border-[#0b8f5a] text-xs font-medium outline-none">
+            
+            <div class="max-h-64 overflow-y-auto space-y-1.5 pr-1">
+              ${availPopApps.length ? availPopApps.map(a => `
+                <div onclick="addAppDirectly('popularAppIds', ${a.id})" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] border border-transparent hover:border-[#0b8f5a]/40 cursor-pointer transition">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    ${renderAppIcon(a, 'w-9 h-9 text-lg')}
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm truncate">${esc(a.n)}</div>
+                      <div class="text-[11px] text-slate-500">${esc(a.c)} • ${bn(a.r)} ★</div>
+                    </div>
+                  </div>
+                  <span class="px-3 py-1.5 rounded-lg bg-[#0b8f5a] text-white text-xs font-bold shrink-0">➕ যোগ</span>
+                </div>
+              `).join('') : `
+                <div class="text-center py-5 text-xs text-slate-500">আর কোনো অ্যাপ বাকি নেই বা খুঁজে পাওয়া যায়নি।</div>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- সারি ২: সেরা গেম -->
+        <div class="bg-white dark:bg-[#1c211f] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-3.5">
+          <div>
+            <h3 class="font-bold text-base flex items-center gap-2">🎮 নিচের সারি ২: সেরা গেম</h3>
+            <p class="text-xs text-slate-500">নিচ থেকে গেমের নাম লিখে সার্চ করুন এবং সরাসরি ট্যাপ করে সারিতে যুক্ত করুন।</p>
+          </div>
+
+          <!-- যুক্ত করা গেমগুলোর তালিকা -->
+          ${popGameList.length ? `
+            <div class="space-y-2">
+              <div class="text-xs font-bold text-[#0b8f5a] dark:text-[#3ddc97]">✅ সারিতে যুক্ত করা গেম (${bn(popGameList.length)}টি):</div>
+              ${popGameList.map((a, i) => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#e6f5ee]/60 dark:bg-[#1d3a2e]/50 border border-[#0b8f5a]/30">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-xs font-bold text-[#0b8f5a] w-4">${bn(i + 1)}.</span>
+                    ${renderAppIcon(a, 'w-9 h-9 text-lg')}
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm truncate">${esc(a.n)}</div>
+                      <div class="text-[11px] text-slate-500">${esc(a.c)} • ${bn(a.r)} ★</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="movePopularItem('popularGameIds', ${i}, -1)" class="w-7 h-7 rounded-lg bg-white dark:bg-[#1c211f] text-xs shadow-2xs" title="উপরে নিন">⬆️</button>
+                    <button onclick="movePopularItem('popularGameIds', ${i}, 1)" class="w-7 h-7 rounded-lg bg-white dark:bg-[#1c211f] text-xs shadow-2xs" title="নিচে নিন">⬇️</button>
+                    <button onclick="removeFromPopularRow('popularGameIds', ${a.id})" class="w-7 h-7 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold" title="বাদ দিন">✕</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <div class="text-center py-3 text-xs text-slate-500 bg-slate-50 dark:bg-[#121513] rounded-xl">
+              এখনও কোনো নির্দিষ্ট গেম যোগ করা হয়নি (ডিফল্ট ক্রমে দেখাচ্ছে)।
+            </div>
+          `}
+
+          <!-- সার্চ বক্স ও সরাসরি সিলেক্ট করার জন্য গেম তালিকা -->
+          <div class="pt-2 border-t border-slate-200 dark:border-[#2a312e] space-y-2">
+            <input type="text" value="${esc(state.popGameSearch)}" oninput="updatePopSearch('popGameSearch', this.value)" placeholder="🔍 গেমের নাম লিখে সার্চ করুন..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] focus:border-[#0b8f5a] text-xs font-medium outline-none">
+            
+            <div class="max-h-64 overflow-y-auto space-y-1.5 pr-1">
+              ${availPopGames.length ? availPopGames.map(a => `
+                <div onclick="addAppDirectly('popularGameIds', ${a.id})" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#252b29] hover:bg-[#e6f5ee] dark:hover:bg-[#1d3a2e] border border-transparent hover:border-[#0b8f5a]/40 cursor-pointer transition">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    ${renderAppIcon(a, 'w-9 h-9 text-lg')}
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm truncate">${esc(a.n)}</div>
+                      <div class="text-[11px] text-slate-500">${esc(a.c)} • ${bn(a.r)} ★</div>
+                    </div>
+                  </div>
+                  <span class="px-3 py-1.5 rounded-lg bg-[#0b8f5a] text-white text-xs font-bold shrink-0">➕ যোগ</span>
+                </div>
+              `).join('') : `
+                <div class="text-center py-5 text-xs text-slate-500">আর কোনো গেম বাকি নেই বা খুঁজে পাওয়া যায়নি।</div>
+              `}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// সার্চ ইনপুটের ফোকাস ও কার্সার পজিশন ঠিক রেখে রেন্ডার করার হেল্পার
+function updateBannerSearch(idx, val) {
+  const active = document.activeElement;
+  const pos = active ? active.selectionStart : val.length;
+  state.bannerSearch[idx] = val;
+  render();
+  const inputs = document.querySelectorAll(`input[oninput^="updateBannerSearch(${idx},"]`);
+  if (inputs[0]) {
+    inputs[0].focus();
+    inputs[0].setSelectionRange(pos, pos);
+  }
+}
+
+function updatePopSearch(key, val) {
+  const active = document.activeElement;
+  const pos = active ? active.selectionStart : val.length;
+  state[key] = val;
+  render();
+  const inp = document.querySelector(`input[oninput^="updatePopSearch('${key}'"]`);
+  if (inp) {
+    inp.focus();
+    inp.setSelectionRange(pos, pos);
+  }
+}
+
+function addAppDirectly(listKey, id) {
+  const arr = state.store.homeLayout[listKey] || [];
+  if (!arr.includes(id)) {
+    arr.push(id);
+    state.store.homeLayout[listKey] = arr;
+    saveLocalStore();
+    render();
+    toast("✅ সারিতে যুক্ত করা হয়েছে");
+  }
+}
+
+function changeBannerMode(idx, mode) {
+  state.store.homeLayout.banners[idx].mode = mode;
+  saveLocalStore();
+  render();
+  toast("✅ ব্যানার মোড আপডেট হয়েছে");
+}
+
+function updateBannerMeta(idx, key, val) {
+  state.store.homeLayout.banners[idx][key] = val;
+  saveLocalStore();
+  render();
+  toast("✅ ব্যানার তথ্য সেভ হয়েছে");
+}
+
+function uploadHeroBannerImage(input, idx) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = async () => {
+      const w = 720, h = 384;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      const sc = Math.max(w / img.width, h / img.height);
+      const dw = img.width * sc, dh = img.height * sc;
+      ctx.fillStyle = "#121513";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.86);
+      const ok = await putIDB("hero_banner:" + idx, dataUrl);
+      if (ok) {
+        IMG["hero_banner:" + idx] = dataUrl;
+        state.store.homeLayout.banners[idx].mode = 'image';
+        state.store.homeLayout.banners[idx].hasImg = true;
+        saveLocalStore();
+        render();
+        toast("🖼️ গ্যালারি থেকে ব্যানার ছবি যুক্ত হয়েছে");
+      } else {
+        toast("⚠️ ছবি সেভ করতে সমস্যা হয়েছে");
+      }
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFromPopularRow(listKey, id) {
+  state.store.homeLayout[listKey] = (state.store.homeLayout[listKey] || []).filter(x => x != id);
+  saveLocalStore();
+  render();
+  toast("🗑 সারি থেকে বাদ দেওয়া হয়েছে");
+}
+
+function movePopularItem(listKey, index, dir) {
+  const arr = state.store.homeLayout[listKey] || [];
+  const target = index + dir;
+  if (target < 0 || target >= arr.length) return;
+  const temp = arr[index];
+  arr[index] = arr[target];
+  arr[target] = temp;
+  state.store.homeLayout[listKey] = arr;
+  saveLocalStore();
+  render();
+}
+
+function renderAppIcon(a, sizeClass = 'w-12 h-12 text-2xl') {
+  const img = IMG["logo:" + a.id];
+  if (img) {
+    return `<img src="${img}" class="${sizeClass} rounded-2xl object-cover shrink-0 shadow-xs" alt="">`;
+  }
+  const g0 = (a.g && a.g[0]) || '#12b886';
+  const g1 = (a.g && a.g[1]) || '#0b7285';
+  return `<div class="${sizeClass} rounded-2xl grid place-items-center text-white shrink-0 shadow-xs" style="background:linear-gradient(145deg,${g0},${g1})">${a.e || '📦'}</div>`;
+}
+
+function renderAppsManager() {
+  let apps = getAllApps();
+  if (state.appFilter === 'app') apps = apps.filter(a => a.t === 'app');
+  else if (state.appFilter === 'game') apps = apps.filter(a => a.t === 'game');
+  else if (state.appFilter === 'custom') apps = apps.filter(a => !a.isDefault);
+  else if (state.appFilter === 'locked') apps = apps.filter(a => a.lock);
+
+  if (state.appSearch) {
+    const q = state.appSearch.toLowerCase();
+    apps = apps.filter(a => (a.n + a.d + a.c).toLowerCase().includes(q));
+  }
+
+  return `
+    <div class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold">অ্যাপ ও গেম কন্ট্রোল (${bn(apps.length)})</h2>
+          <p class="text-xs text-slate-500">যেকোনো অ্যাপ এডিট, লক/আনলক বা নতুন ফাইল আপলোড করুন</p>
+        </div>
+        <button onclick="openAppModal()" class="px-4 py-2.5 rounded-xl bg-[#0b8f5a] hover:bg-[#09784b] text-white font-semibold text-sm shadow-sm flex items-center justify-center gap-1.5">
+          <span>➕</span> নতুন অ্যাপ প্রকাশ করুন
+        </button>
+      </div>
+
+      <div class="bg-white dark:bg-[#1c211f] p-3 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-3">
+        <input type="text" value="${esc(state.appSearch)}" oninput="state.appSearch=this.value;render()" placeholder="🔍 অ্যাপের নাম, ক্যাটাগরি বা ডেভেলপার খুঁজুন..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-transparent focus:border-[#0b8f5a] outline-none text-sm">
+        
+        <div class="flex gap-2 overflow-x-auto no-scrollbar">
+          ${[
+            ['all', 'সবগুলো'],
+            ['app', '📱 অ্যাপস'],
+            ['game', '🎮 গেমস'],
+            ['custom', '✨ কাস্টম আপলোড'],
+            ['locked', '🔒 লক করা']
+          ].map(([k, label]) => `
+            <button onclick="state.appFilter='${k}';render()" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${state.appFilter === k ? 'bg-[#0b8f5a] text-white' : 'bg-slate-100 dark:bg-[#252b29] text-slate-600 dark:text-slate-300'}">
+              ${label}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        ${apps.length ? apps.map(a => `
+          <div class="bg-white dark:bg-[#1c211f] p-3.5 rounded-2xl border ${a.lock ? 'border-amber-400/70 dark:border-amber-500/40' : 'border-slate-200 dark:border-[#2a312e]'} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              ${renderAppIcon(a)}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="font-bold text-sm sm:text-base truncate">${esc(a.n)}</h3>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${a.isDefault ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'}">
+                    ${a.isDefault ? 'বিল্ট-ইন' : (a.ft ? a.ft.toUpperCase() : 'কাস্টম')}
+                  </span>
+                  ${a.lock ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">🔒 লক করা</span>' : ''}
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  ${esc(a.d)} • ${esc(a.c)} • ${bn(a.r)} ★ • ${dlText(a)} • ${bn(a.sz)} এমবি
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+              <button onclick="openAppModal(${a.id})" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#252b29] hover:bg-slate-200 dark:hover:bg-[#2f3834] text-xs font-semibold transition">
+                ✏️ এডিট
+              </button>
+              <button onclick="toggleAppLock(${a.id})" class="px-3 py-1.5 rounded-xl ${a.lock ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'} text-xs font-semibold transition">
+                ${a.lock ? '🔓 আনলক' : '🔒 লক'}
+              </button>
+              <button onclick="confirmDeleteApp(${a.id})" class="px-3 py-1.5 rounded-xl bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-semibold transition">
+                🗑 মুছুন
+              </button>
+            </div>
+          </div>
+        `).join('') : `
+          <div class="bg-white dark:bg-[#1c211f] rounded-2xl p-10 text-center text-slate-500 border border-slate-200 dark:border-[#2a312e]">
+            😕 কোনো অ্যাপ খুঁজে পাওয়া যায়নি।
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function openAppModal(id = null) {
+  tempFiles = {};
+  const app = id ? getAllApps().find(a => a.id === id) : null;
+  $('modalTitle').textContent = app ? `এডিট করুন: ${app.n}` : '➕ নতুন অ্যাপ / গেম প্রকাশ করুন';
+
+  const logoPrev = app && IMG["logo:" + app.id] ? `<img src="${IMG["logo:" + app.id]}" class="w-full h-full object-cover">` : (app ? `<span class="text-3xl">${app.e || '📦'}</span>` : '+ লোগো');
+  
+  $('modalBody').innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-start gap-4">
+        <div>
+          <label class="block text-xs font-semibold mb-1.5">অ্যাপ লোগো</label>
+          <label class="relative w-20 h-20 rounded-2xl border-2 border-dashed border-slate-300 dark:border-[#2a312e] bg-slate-50 dark:bg-[#121513] grid place-items-center cursor-pointer overflow-hidden text-xs text-slate-500">
+            <input type="file" accept="image/*" class="hidden" onchange="handleImagePick(this, 'logo', 192, 192)">
+            <span id="prev_logo" class="w-full h-full grid place-items-center">${logoPrev}</span>
+          </label>
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-semibold mb-1.5">ব্যানার ছবি (সর্বোচ্চ ৩টি)</label>
+          <div class="grid grid-cols-3 gap-2">
+            ${[1, 2, 3].map(k => {
+              const bImg = app && IMG["b" + k + ":" + app.id];
+              return `
+                <label class="relative aspect-video rounded-xl border-2 border-dashed border-slate-300 dark:border-[#2a312e] bg-slate-50 dark:bg-[#121513] grid place-items-center cursor-pointer overflow-hidden text-[11px] text-slate-500">
+                  <input type="file" accept="image/*" class="hidden" onchange="handleImagePick(this, 'b${k}', 640, 360)">
+                  <span id="prev_b${k}" class="w-full h-full grid place-items-center">${bImg ? `<img src="${bImg}" class="w-full h-full object-cover">` : `+ ব্যানার ${bn(k)}`}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold mb-1">অ্যাপ/গেমের নাম *</label>
+          <input id="f_name" type="text" value="${app ? esc(app.n) : ''}" placeholder="যেমন: সুপার ক্যালকুলেটর" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">ডেভেলপার / কোম্পানির নাম *</label>
+          <input id="f_dev" type="text" value="${app ? esc(app.d) : esc(state.store.adminCfg.creator)}" placeholder="ডেভেলপারের নাম" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="block text-xs font-semibold mb-1">ধরন</label>
+          <select id="f_type" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+            <option value="app" ${!app || app.t === 'app' ? 'selected' : ''}>📱 অ্যাপ</option>
+            <option value="game" ${app && app.t === 'game' ? 'selected' : ''}>🎮 গেম</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">ক্যাটাগরি</label>
+          <select id="f_cat" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+            ${CATS.map(c => `<option value="${c}" ${app && app.c === c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">রেটিং (১-৫)</label>
+          <input id="f_rate" type="number" step="0.1" min="1" max="5" value="${app ? app.r : '4.8'}" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">ডাউনলোড সংখ্যা</label>
+          <input id="f_dl" type="text" value="${app ? esc(app.dl) : '১০ হাজার+'}" placeholder="যেমন: ১ কোটি+" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold mb-1">সাইজ (এমবি)</label>
+          <input id="f_sz" type="number" min="1" value="${app ? app.sz : '12'}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">ইমোজি আইকন</label>
+          <input id="f_emoji" type="text" value="${app ? esc(app.e || '📦') : '🚀'}" maxlength="4" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold mb-1">অ্যাপের বিস্তারিত বিবরণ *</label>
+        <textarea id="f_desc" rows="3" placeholder="অ্যাপটি কী কাজ করে তা লিখুন..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none resize-none">${app ? esc(app.ds) : ''}</textarea>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold mb-1">অ্যাপ ফাইল আপলোড (.html বা .apk)</label>
+        <input id="f_file" type="file" accept=".html,.htm,.apk,application/vnd.android.package-archive,text/html" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] text-xs">
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-[#2a312e]">
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+          <input id="f_lock" type="checkbox" ${app && app.lock ? 'checked' : ''} class="w-4 h-4 accent-[#0b8f5a]">
+          <span class="text-xs font-semibold">স্টোর থেকে লক (লুকিয়ে) রাখুন</span>
+        </label>
+        <div class="flex gap-2">
+          <button onclick="closeAppModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-[#2a312e] font-semibold">বাতিল</button>
+          <button onclick="saveAppForm(${app ? app.id : 'null'})" class="px-5 py-2 rounded-xl bg-[#0b8f5a] hover:bg-[#09784b] text-white font-bold shadow">
+            ${app ? '💾 আপডেট সেভ করুন' : '🚀 প্রকাশ করুন'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('appModal').classList.remove('hidden');
+  $('appModal').classList.add('flex');
+}
+
+function closeAppModal() {
+  $('appModal').classList.add('hidden');
+  $('appModal').classList.remove('flex');
+}
+
+function handleImagePick(input, key, w, h) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      const sc = Math.max(w / img.width, h / img.height);
+      const dw = img.width * sc, dh = img.height * sc;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      const dataUrl = canvas.toDataURL(key === 'logo' ? 'image/png' : 'image/jpeg', 0.85);
+      tempFiles[key] = dataUrl;
+      const prev = $('prev_' + key);
+      if (prev) prev.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveAppForm(editId) {
+  const name = $('f_name').value.trim();
+  const dev = $('f_dev').value.trim() || state.store.adminCfg.creator;
+  const type = $('f_type').value;
+  const cat = $('f_cat').value;
+  const rate = Math.min(5, Math.max(1, parseFloat($('f_rate').value) || 4.5));
+  const dl = $('f_dl').value.trim() || "নতুন";
+  const sz = Math.max(1, parseInt($('f_sz').value) || 5);
+  const emoji = $('f_emoji').value.trim() || "📦";
+  const desc = $('f_desc').value.trim();
+  const lock = $('f_lock').checked;
+  const fileInput = $('f_file').files[0];
+
+  if (!name) return toast("⚠️ অ্যাপের নাম লিখুন");
+  if (!desc) return toast("⚠️ অ্যাপের বিবরণ লিখুন");
+
+  let fileType = null;
+  if (fileInput) {
+    const ext = fileInput.name.split('.').pop().toLowerCase();
+    if (ext === 'apk') fileType = 'apk';
+    else if (ext === 'html' || ext === 'htm') fileType = 'html';
+    else return toast("⚠️ শুধুমাত্র .html বা .apk ফাইল আপলোড করা যাবে");
+  }
+
+  const targetId = editId || Date.now();
+
+  if (tempFiles.logo) {
+    await putIDB("logo:" + targetId, tempFiles.logo);
+    IMG["logo:" + targetId] = tempFiles.logo;
+  }
+  for (let k of [1, 2, 3]) {
+    if (tempFiles["b" + k]) {
+      await putIDB("b" + k + ":" + targetId, tempFiles["b" + k]);
+      IMG["b" + k + ":" + targetId] = tempFiles["b" + k];
+    }
+  }
+  if (fileInput) {
+    await putIDB("file:" + targetId, fileInput);
+  }
+
+  const isDefault = DEFAULT_APPS.some(a => a.id === targetId);
+  const todayBn = new Date().toLocaleDateString("bn-BD");
+
+  if (isDefault) {
+    const prevOv = state.store.overrides[targetId] || {};
+    state.store.overrides[targetId] = {
+      ...prevOv,
+      n: name, d: dev, t: type, c: cat, r: rate, dl: dl, sz: sz, e: emoji, ds: desc, lock: lock,
+      ...(fileInput ? { ft: fileType, fn: fileInput.name, owner: 'admin@galaxy.ai', v: (prevOv.v || 1) + 1, up: todayBn } : {})
+    };
+  } else if (editId) {
+    const idx = state.store.custom.findIndex(a => a.id === editId);
+    if (idx !== -1) {
+      const old = state.store.custom[idx];
+      state.store.custom[idx] = {
+        ...old,
+        n: name, d: dev, t: type, c: cat, r: rate, dl: dl, sz: sz, e: emoji, ds: desc, lock: lock,
+        ...(fileInput ? { ft: fileType, fn: fileInput.name, v: (old.v || 1) + 1, up: todayBn } : {})
+      };
+    }
+  } else {
+    const newApp = {
+      id: targetId,
+      n: name,
+      d: dev,
+      t: type,
+      c: cat,
+      r: rate,
+      dl: dl,
+      sz: fileInput ? Math.max(1, Math.round(fileInput.size / 1048576)) : sz,
+      e: emoji,
+      g: ["#12b886", "#0b7285"],
+      ds: desc,
+      owner: "admin@galaxy.ai",
+      v: 1,
+      lock: lock,
+      ...(fileInput ? { ft: fileType, fn: fileInput.name, up: todayBn } : {})
+    };
+    state.store.custom.push(newApp);
+  }
+
+  saveLocalStore();
+  closeAppModal();
+  render();
+  toast(editId ? "✅ অ্যাপ সফলভাবে আপডেট হয়েছে" : "🎉 নতুন অ্যাপ স্টোরে প্রকাশিত হয়েছে");
+}
+
+function toggleAppLock(id) {
+  const isDefault = DEFAULT_APPS.some(a => a.id === id);
+  if (isDefault) {
+    const ov = state.store.overrides[id] || {};
+    ov.lock = !ov.lock;
+    state.store.overrides[id] = ov;
+    toast(ov.lock ? "🔒 অ্যাপটি লক করা হয়েছে" : "🔓 অ্যাপটি আনলক করা হয়েছে");
+  } else {
+    const app = state.store.custom.find(a => a.id === id);
+    if (app) {
+      app.lock = !app.lock;
+      toast(app.lock ? "🔒 অ্যাপটি লক করা হয়েছে" : "🔓 অ্যাপটি আনলক করা হয়েছে");
+    }
+  }
+  saveLocalStore();
+  render();
+}
+
+function confirmDeleteApp(id) {
+  const app = getAllApps().find(a => a.id === id);
+  if (!app) return;
+  openDialog(
+    "অ্যাপ মুছে ফেলবেন?",
+    `"${app.n}" অ্যাপটি স্টোর থেকে স্থায়ীভাবে মুছে ফেলতে চান?`,
+    false,
+    "",
+    () => {
+      if (app.isDefault) {
+        state.store.overrides[id] = { ...(state.store.overrides[id] || {}), deleted: true };
+      } else {
+        state.store.custom = state.store.custom.filter(a => a.id !== id);
+      }
+      delete state.store.inst[id];
+      delete state.store.rev[id];
+      ["logo:", "b1:", "b2:", "b3:", "file:"].forEach(prefix => delIDB(prefix + id));
+      saveLocalStore();
+      render();
+      toast("🗑 অ্যাপটি মুছে ফেলা হয়েছে");
+    }
+  );
+}
+
+function renderUsersManager() {
+  let users = state.store.users || [];
+  if (state.userSearch) {
+    const q = state.userSearch.toLowerCase();
+    users = users.filter(u => (u.n + u.e + (u.ph || '') + (u.di || '')).toLowerCase().includes(q));
+  }
+
+  return `
+    <div class="space-y-4">
+      <div>
+        <h2 class="text-lg font-bold">ইউজার ও ডেভেলপার ম্যানেজমেন্ট (${bn(users.length)})</h2>
+        <p class="text-xs text-slate-500">নিবন্ধিত ইউজারদের রোল পরিবর্তন, পাসওয়ার্ড রিসেট বা অ্যাকাউন্ট নিয়ন্ত্রণ করুন</p>
+      </div>
+
+      <div class="bg-white dark:bg-[#1c211f] p-3 rounded-2xl border border-slate-200 dark:border-[#2a312e]">
+        <input type="text" value="${esc(state.userSearch)}" oninput="state.userSearch=this.value;render()" placeholder="🔍 নাম, জিমেইল, মোবাইল নম্বর বা জেলা দিয়ে খুঁজুন..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] outline-none text-sm">
+      </div>
+
+      <div class="space-y-3">
+        ${users.length ? users.map(u => {
+          const isDev = u.t === 'dev';
+          const photo = IMG["photo:" + u.e];
+          return `
+            <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3.5 min-w-0">
+                ${photo 
+                  ? `<img src="${photo}" class="w-12 h-12 rounded-full object-cover border-2 border-[#0b8f5a] shrink-0" alt="">`
+                  : `<div class="w-12 h-12 rounded-full bg-[#0b8f5a] text-white grid place-items-center font-bold text-lg shrink-0">${esc(u.n.charAt(0))}</div>`
+                }
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-bold text-base truncate">${esc(u.n)}</h3>${isVerifiedUser(u.e) ? VBADGE : ''}
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${isDev ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'}">
+                      ${isDev ? '💻 ডেভেলপার' : '📱 ইউজার'}
+                    </span>
+                  </div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">${esc(u.e)}</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 self-end sm:self-center shrink-0">
+                <button onclick="toggleVerify('${esc(u.e)}')" class="px-3 py-1.5 rounded-xl ${isVerifiedUser(u.e) ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300' : 'bg-slate-100 dark:bg-[#252b29]'} text-xs font-semibold">
+                  ${isVerifiedUser(u.e) ? '✖ ব্যাজ সরান' : '✔️ ভেরিফাই ব্যাজ দিন'}
+                </button>
+                <button onclick="toggleUserRole('${esc(u.e)}')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#252b29] text-xs font-semibold">
+                  ${isDev ? '📱 ইউজার বানান' : '💻 ডেভেলপার বানান'}
+                </button>
+                <button onclick="confirmDeleteUser('${esc(u.e)}')" class="px-3 py-1.5 rounded-xl bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-semibold">
+                  🗑 ডিলিট
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('') : `
+          <div class="bg-white dark:bg-[#1c211f] rounded-2xl p-10 text-center text-slate-500 border border-slate-200 dark:border-[#2a312e]">
+            👤 কোনো নিবন্ধিত ইউজার পাওয়া যায়নি।
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function toggleUserRole(email) {
+  const user = state.store.users.find(u => u.e === email);
+  if (!user) return;
+  user.t = user.t === 'dev' ? 'user' : 'dev';
+  saveLocalStore();
+  render();
+  toast("✅ ইউজার রোল পরিবর্তন হয়েছে");
+}
+
+function confirmDeleteUser(email) {
+  openDialog("অ্যাকাউন্ট ডিলিট?", "এই ইউজার অ্যাকাউন্টটি মুছে ফেলতে চান?", false, "", () => {
+    state.store.users = state.store.users.filter(u => u.e !== email);
+    saveLocalStore();
+    render();
+    toast("🗑 মুছে ফেলা হয়েছে");
+  });
+}
+
+function renderReviewsManager() {
+  const allApps = getAllApps();
+  const revMap = state.store.rev || {};
+  let allReviews = [];
+
+  Object.keys(revMap).forEach(appId => {
+    const app = allApps.find(a => a.id == appId);
+    (revMap[appId] || []).forEach((r, index) => {
+      allReviews.push({ appId: appId, appName: app ? app.n : `অ্যাপ #${appId}`, appEmoji: app ? app.e : '📦', index: index, stars: r.s, text: r.t });
+    });
+  });
+
+  return `
+    <div class="space-y-4">
+      <div>
+        <h2 class="text-lg font-bold">রিভিউ ও রেটিং মডারেশন (${bn(allReviews.length)})</h2>
+        <p class="text-xs text-slate-500">ইউজারদের দেওয়া রিভিউ পর্যবেক্ষণ ও মডারেশনের জায়গা</p>
+      </div>
+
+      <div class="space-y-2.5">
+        ${allReviews.length ? allReviews.reverse().map(rv => `
+          <div class="bg-white dark:bg-[#1c211f] p-4 rounded-2xl border border-slate-200 dark:border-[#2a312e] flex items-start justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span>${rv.appEmoji}</span>
+                <span class="font-bold text-sm">${esc(rv.appName)}</span>
+                <span class="text-amber-500 text-xs">${"★".repeat(rv.stars)}</span>
+              </div>
+              <p class="text-sm text-slate-700 dark:text-slate-300">${esc(rv.text)}</p>
+            </div>
+            <button onclick="deleteSingleReview('${rv.appId}', ${rv.index})" class="px-3 py-1.5 rounded-xl bg-red-100 text-red-700 dark:bg-red-900/40 text-xs font-semibold shrink-0">🗑 মুছুন</button>
+          </div>
+        `).join('') : `
+          <div class="bg-white dark:bg-[#1c211f] rounded-2xl p-10 text-center text-slate-500 border border-slate-200 dark:border-[#2a312e]">কোনো রিভিউ নেই।</div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function deleteSingleReview(appId, index) {
+  if (!state.store.rev[appId]) return;
+  state.store.rev[appId].splice(index, 1);
+  if (state.store.rev[appId].length === 0) delete state.store.rev[appId];
+  saveLocalStore();
+  render();
+  toast("🗑 রিভিউ মুছে ফেলা হয়েছে");
+}
+
+function renderSettings() {
+  const cfg = state.store.adminCfg;
+  return `
+    <div class="space-y-5">
+      <div class="bg-white dark:bg-[#1c211f] p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-4">
+        <h2 class="font-bold text-base">⚙️ সিস্টেম ও AI সেটিংস</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div>
+            <label class="block text-xs font-semibold mb-1">স্টোরের নাম</label>
+            <input id="cfg_store" type="text" value="${esc(cfg.storeName)}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">নির্মাতার নাম</label>
+            <input id="cfg_creator" type="text" value="${esc(cfg.creator)}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+          </div>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div>
+            <label class="block text-xs font-semibold mb-1">🔑 Gemini API Key (ইউজার অ্যাপের AI এই key দিয়ে চলবে)</label>
+            <input id="cfg_gkey" type="text" value="${esc(cfg.gkey || '')}" autocomplete="off" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">🤖 AI-এর জন্য অতিরিক্ত নির্দেশ (ঐচ্ছিক)</label>
+            <textarea id="cfg_prompt" rows="3" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none resize-none">${esc(cfg.customPrompt || '')}</textarea>
+          </div>
+        </div>
+        <button onclick="saveAdminSettings()" class="px-5 py-2.5 rounded-xl bg-[#0b8f5a] text-white font-bold text-sm">💾 সেভ করুন</button>
+      </div>
+
+      <div class="bg-white dark:bg-[#1c211f] p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-4">
+        <div>
+          <h2 class="font-bold text-base">📲 সোশ্যাল যোগাযোগ লিংক</h2>
+          <p class="text-xs text-slate-500 mt-0.5">ইউজার অ্যাপের বাম পাশের বাটনে এই লিংকগুলো দেখাবে। ট্যাপ করলে সরাসরি ওই জায়গায় চলে যাবে। ফাঁকা রাখলে "লিংক যোগ করা হয়নি" দেখাবে।</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          ${SOC_LIST.map(([k, label, ph]) => `
+            <div>
+              <label class="block text-xs font-semibold mb-1">${label}</label>
+              <input id="soc_${k}" type="text" value="${esc(((cfg.social || {})[k]) || '')}" placeholder="${esc(ph)}" autocomplete="off" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+            </div>
+          `).join('')}
+        </div>
+        <button onclick="saveSocialLinks()" class="px-5 py-2.5 rounded-xl bg-[#0b8f5a] text-white font-bold text-sm">💾 লিংক সেভ করুন</button>
+      </div>
+
+      <div class="bg-white dark:bg-[#1c211f] p-5 rounded-2xl border border-slate-200 dark:border-[#2a312e] space-y-4">
+        <div>
+          <h2 class="font-bold text-base">🌐 স্টোরের লিংক (Chrome-এ খোলার জন্য)</h2>
+          <p class="text-xs text-slate-500 mt-0.5">ইউজার অ্যাপের একদম উপরের Chrome বারে চাপ দিলে এই লিংকে আপনার স্টোর সরাসরি Chrome ব্রাউজারে খুলবে। ফাঁকা রাখলে যে লিংকে পেজটা খোলা আছে সেটাই ব্যবহার হবে।</p>
+        </div>
+        <div class="text-sm">
+          <label class="block text-xs font-semibold mb-1">স্টোরের ওয়েব লিংক</label>
+          <input id="cfg_storeurl" type="text" value="${esc(cfg.storeUrl || '')}" placeholder="https://আপনার-ইউজারনেম.github.io/appbazar/" autocomplete="off" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#121513] border border-slate-200 dark:border-[#2a312e] outline-none">
+        </div>
+        <button onclick="saveStoreUrl()" class="px-5 py-2.5 rounded-xl bg-[#0b8f5a] text-white font-bold text-sm">💾 লিংক সেভ করুন</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveAdminSettings() {
+  state.store.adminCfg.gkey = $('cfg_gkey').value.trim();
+  state.store.adminCfg.customPrompt = $('cfg_prompt').value.trim();
+  state.store.adminCfg.storeName = $('cfg_store').value.trim() || "Galaxy Icon Ai";
+  state.store.adminCfg.creator = $('cfg_creator').value.trim() || "শ্রাবণ স্যার";
+  saveLocalStore();
+  toast("✅ সেভ হয়েছে");
+}
+
+let dialogCallback = null;
+function openDialog(title, msg, showInput, defaultVal, onConfirm) {
+  $('dlgTitle').textContent = title;
+  $('dlgMsg').textContent = msg;
+  const wrap = $('dlgInputWrap');
+  const inp = $('dlgInput');
+  if (showInput) { wrap.classList.remove('hidden'); inp.value = defaultVal || ''; } else { wrap.classList.add('hidden'); }
+  dialogCallback = onConfirm;
+  $('dialogModal').classList.remove('hidden');
+  $('dialogModal').classList.add('flex');
+}
+
+function closeDialog() {
+  $('dialogModal').classList.add('hidden');
+  $('dialogModal').classList.remove('flex');
+  dialogCallback = null;
+}
+
+$('dlgConfirmBtn').onclick = () => {
+  const val = $('dlgInput').value.trim();
+  const cb = dialogCallback;
+  closeDialog();
+  if (cb) cb(val);
+};
+
+// ==================== ভেরিফাইড ব্যাজ ও সোশ্যাল লিংক ====================
+const VBADGE = '<svg viewBox="0 0 24 24" width="18" height="18" style="display:inline-block;vertical-align:middle;flex:none" aria-label="ভেরিফাইড"><circle cx="12" cy="12" r="11" fill="#1d9bf0"/><path d="M7 12.4l3.3 3.2L17 8.9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function vList() {
+  const v = state.store.adminCfg.verified;
+  return Array.isArray(v) ? v.filter(Boolean) : Object.keys(v || {}).map(k => v[k]).filter(Boolean);
+}
+function isVerifiedUser(email) { return vList().indexOf(email) >= 0; }
+function toggleVerify(email) {
+  const list = vList();
+  const i = list.indexOf(email);
+  if (i >= 0) list.splice(i, 1); else list.push(email);
+  state.store.adminCfg.verified = list;
+  saveLocalStore();
+  render();
+  toast(i >= 0 ? "ℹ️ ভেরিফিকেশন ব্যাজ সরানো হয়েছে" : "✅ ভেরিফিকেশন ব্যাজ দেওয়া হয়েছে");
+}
+const SOC_LIST = [
+  ['tiktok', '🎵 TikTok লিংক', 'https://www.tiktok.com/@yourname'],
+  ['youtube', '▶️ YouTube লিংক', 'https://www.youtube.com/@yourchannel'],
+  ['facebook', '📘 Facebook লিংক', 'https://www.facebook.com/yourpage'],
+  ['telegram', '✈️ Telegram লিংক বা ইউজারনেম', 'https://t.me/yourname অথবা @yourname'],
+  ['whatsapp', '💬 WhatsApp নম্বর', '01XXXXXXXXX']
+];
+function saveSocialLinks() {
+  const s = {};
+  SOC_LIST.forEach(([k]) => { s[k] = ($('soc_' + k).value || '').trim(); });
+  state.store.adminCfg.social = s;
+  saveLocalStore();
+  toast("✅ সোশ্যাল লিংক সেভ হয়েছে");
+}
+
+function saveStoreUrl() {
+  let v = ($('cfg_storeurl').value || '').trim();
+  if (v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+  if (v && !/^https?:\/\/[^\s\/]+\.[^\s\/]+/i.test(v)) { toast("❌ সঠিক ওয়েব লিংক দিন"); return; }
+  state.store.adminCfg.storeUrl = v;
+  saveLocalStore();
+  toast(v ? "✅ স্টোরের লিংক সেভ হয়েছে" : "ℹ️ লিংক মুছে ফেলা হয়েছে");
+}
+
+(async function init() {
+  await openIDB();
+  await syncAll(false);
+  switchTab('dash');
+  FB.A = {
+    get: sec => state.store[sec],
+    set: (sec, v) => { state.store[sec] = v; },
+    persist: () => { try { localStorage.setItem("appbazar", JSON.stringify(state.store)); } catch (e) {} },
+    refresh: () => { if (!fbTyping('#content')) render(); },
+    assets: () => { if (!fbTyping('#content')) render(); }
+  };
+  fbStart();
+})();
+</script>
+</body>
+</html>
